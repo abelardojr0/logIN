@@ -3,6 +3,8 @@ import { Form, MensagemError, Section, Title } from "../../GlobalStyle";
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
 import { CadastrarDiv } from "./style";
+import axios from "axios";
+axios.defaults.baseURL = "http://127.0.0.1:5000";
 
 export const Cadastrar = () => {
   const [usuario, setUsuario] = useState();
@@ -13,7 +15,7 @@ export const Cadastrar = () => {
   const [senhaFraca, setSenhaFraca] = useState(false);
   const [emailExiste, setEmailExiste] = useState(false);
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
     const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
@@ -24,12 +26,23 @@ export const Cadastrar = () => {
     if (!regex.test(senha)) {
       setSenhaFraca(true);
     }
+    try {
+      const { data } = await axios.post("http://127.0.0.1:5000/usuarios", {
+        usuario,
+        email,
+        senha,
+      });
+      console.log(data);
+    } catch (error) {
+      return error;
+    }
   }
 
   useEffect(() => {
     setSenhaIncompativel(false);
     setSenhaFraca(false);
   }, [senha]);
+
   return (
     <Section>
       <Form onSubmit={submit}>

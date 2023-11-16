@@ -4,21 +4,23 @@ import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
 import { LoginForgot } from "./style";
 import { data } from "../../mock/database";
+import axios from "axios";
 
 export const Login = () => {
   const [email, setEmail] = useState();
   const [senha, setSenha] = useState();
   const [error, setError] = useState(false);
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
-    const validarEmail = data.some((element) => element.email === email);
-    const validarSenha = data.some((element) => element.senha === senha);
-
-    if (validarEmail && validarSenha) {
-      alert("Logado com sucesso");
-    } else {
-      setError(true);
+    try {
+      const { data } = await axios.post("http://127.0.0.1:5000/login", {
+        email,
+        senha,
+      });
+      console.log(data);
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -38,7 +40,7 @@ export const Login = () => {
           type={"password"}
           onChange={(e) => setSenha(e.target.value)}
         />
-        {error && <MensagemError>Email ou senha incorretos</MensagemError>}
+        {error && <MensagemError>{error}</MensagemError>}
         <LoginForgot>Esqueceu a senha?</LoginForgot>
         <Button>Entrar</Button>
       </Form>
